@@ -36,38 +36,26 @@
                          
                 </div>
             <div class="midle-weather">
-                <p>Today: 
+                <p class="date">Today, 
                     @DateTime.Now.ToString("dd MMMM", 
                     new System.Globalization.CultureInfo("en-GB"))</p>
+                <p class="temperature">@Weather1.AboutWeather.Temp°</p>
+                <p class="description">@Weather1.Weather[0].Description.ToUpper()</p>
+                <div class="additional-info">
+                    <div class="additional-info-container">
+                        <div class="start-info">@Weather1.Wind.Speed m/s</div>
+                        <div class="separator">|</div>
+                        <div class="end-info">Wind</div>
+                    </div>
+                    <div class="additional-info-container">
+                        <div class="start-info">Hum</div>
+                        <div class="separator">|</div>
+                        <div class="end-info">@Weather1.AboutWeather.Humidity%</div>
+                    </div>
+                </div>
+
             </div>
-                             
-               @*  <p>Today: @Weather1.Weather[0].Description</p>
-
-                <p>Temperature: @Weather1.AboutWeather.Temp  °C</p>
-
-                <p>Feels Like: @Weather1.AboutWeather.FeelsLike  °C</p>
-
-                <p>Sea Level Pressure: @Weather1.AboutWeather.SeaLevelPressure hPa</p>
-
-                <p>Ground Level Pressure: @Weather1.AboutWeather.GroundLevelPressure hPa</p>
-
-                <p>Humidity: @Weather1.AboutWeather.Humidity %</p>
-
-                <p>Visibility: @(Weather1.Visibility.ToString()) km</p>
-
-                <p>Wind Speed: @Weather1.Wind.Speed m/s </p>
-
-                <p>Wind Gust Speed: @Weather1.Wind.Gust m/s </p>
-
-                <p>Wind Direction: @GetWindDirection(Weather1.Wind.Deg) (Weather1.WindInfo.Deg°)</p>
-
-                <p>
-                    Sunrise: @ConvertToUniversalTime(Weather1.CurrentSunInfo.Sunrise)
-                </p>
-
-                <p>
-                    Sunset: @ConvertToUniversalTime(Weather1.CurrentSunInfo.Sunset)
-                </p> *@
+              
             }
             @if (!string.IsNullOrEmpty(Response))
             {
@@ -78,8 +66,19 @@
 
     <section class="daily-forcasted">Hello</section>
 
-  
- 
+@* 
+<p>Sea Level Pressure: @Weather1.AboutWeather.SeaLevelPressure hPa</p>
+<p>Visibility: @(Weather1.Visibility.ToString()) km</p>
+
+<p>Wind Gust Speed: @Weather1.Wind.Gust m/s </p>
+<p>Wind Direction: @GetWindDirection(Weather1.Wind.Deg) (Weather1.WindInfo.Deg°)</p>
+   <p>
+                    Sunrise: @ConvertToUniversalTime(Weather1.CurrentSunInfo.Sunrise)
+                </p>
+
+                <p>
+                    Sunset: @ConvertToUniversalTime(Weather1.CurrentSunInfo.Sunset)
+                </p>*@
 
 
 @code {
