@@ -1,0 +1,181 @@
+﻿@page "/"
+@using WeatherApp.Models
+@using WeatherApp.Services
+@inject WeatherService WeatherService
+
+ 
+    <section class="main-part">
+        <section class="search-section">
+        <h1>Daily Weather Forecast</h1>
+            <div class="search-container">
+                <input class="search-input" type="text" @bind="City" placeholder="Search for location..." />
+                <button class="search-button" @onclick="GetWeather">
+                    🔍
+                </button>
+            </div>
+        </section>
+        <section class="weather-container">
+            @if (Weather1 != null)
+            {
+                <div class="top-weather">
+                     <h2>@Weather1.Name</h2>
+                    <img src="@($"https://openweathermap.org/img/wn/{@Weather1.Weather[0].Icon}@2x.png")"
+                         alt="@Weather1.Weather[0].Description">
+                         
+                </div>
+            <div class="midle-weather">
+                <p>Today: 
+                    @DateTime.Now.ToString("dd MMMM", 
+                    new System.Globalization.CultureInfo("en-GB"));</p>
+            </div>
+                             
+               @*  <p>Today: @Weather1.Weather[0].Description</p>
+
+                <p>Temperature: @Weather1.AboutWeather.Temp  °C</p>
+
+                <p>Feels Like: @Weather1.AboutWeather.FeelsLike  °C</p>
+
+                <p>Sea Level Pressure: @Weather1.AboutWeather.SeaLevelPressure hPa</p>
+
+                <p>Ground Level Pressure: @Weather1.AboutWeather.GroundLevelPressure hPa</p>
+
+                <p>Humidity: @Weather1.AboutWeather.Humidity %</p>
+
+                <p>Visibility: @(Weather1.Visibility.ToString()) km</p>
+
+                <p>Wind Speed: @Weather1.Wind.Speed m/s </p>
+
+                <p>Wind Gust Speed: @Weather1.Wind.Gust m/s </p>
+
+                <p>Wind Direction: @GetWindDirection(Weather1.Wind.Deg) (Weather1.WindInfo.Deg°)</p>
+
+                <p>
+                    Sunrise: @ConvertToUniversalTime(Weather1.CurrentSunInfo.Sunrise)
+                </p>
+
+                <p>
+                    Sunset: @ConvertToUniversalTime(Weather1.CurrentSunInfo.Sunset)
+                </p> *@
+            }
+            @if (!string.IsNullOrEmpty(Response))
+            {
+                <h4>@Response</h4>
+            }
+        </section>
+    </section>
+
+    <section class="daily-forcasted">Hello</section>
+
+  
+ 
+
+
+@code {
+    private string City { get; set; } = string.Empty;
+    private CurrentWeatherResponse? Weather1 { get; set; }
+    private string Response { get; set; } = string.Empty;
+    private ForecastResponse? _forecast;
+    private List<string> _labels = new();
+    private List<double> _chartData = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        City = "Rivne";
+
+        await GetWeather(); // Викликаємо метод для отримання погоди при завантаженні сторінки
+
+        City = string.Empty;
+    }
+
+    private async Task GetWeather()
+    {
+        if (string.IsNullOrWhiteSpace(City))
+        {
+            Response = "City cannot be empty!";
+            return;
+        }
+
+        Weather1 = null;
+        Response = string.Empty;
+
+        var errorOrResult = await WeatherService.GetWeatherAsync(City);
+
+        if (errorOrResult.IsError)
+        {
+            Response = errorOrResult.FirstError.Code;
+            return;
+        }
+
+        Weather1 = errorOrResult.Value;
+
+        // Отримати прогноз погоди після успішного запиту
+        await FetchForecast();
+    }
+
+    private async Task FetchForecast()
+    {
+        var errorOrResult = await WeatherService.GetWeatherForecastAsync(City);
+
+        if (errorOrResult.IsError)
+        {
+            Response = errorOrResult.FirstError.Code;
+            return;
+        }
+
+        _forecast = errorOrResult.Value;
+
+        if (_forecast != null)
+        {
+            _labels = _forecast.List.Select(f => f.DateTime.Substring(5, 11)).ToList();
+            _chartData = _forecast.List.Select(f => f.Main.Temperature).ToList();
+        }
+    }
+
+    public string GetWindDirection(double windDeg)
+    {
+        string[] directions = { "N", "NE", "E", "SE", "S", "SW", "W", "NW", "N" };
+        int index = (int)Math.Round(windDeg / 45.0) % 8;
+        return directions[index];
+    }
+
+    public string ConvertToUniversalTime(int time)
+    {
+        return DateTimeOffset.FromUnixTimeSeconds(time)
+                .ToLocalTime().ToString("HH:mm");
+    }
+}
+
+@* <h4>@Weather1.Name</h4>
+
+<p>Today: @Weather1.Weather[0].Name</p>
+
+<img src="@($"https://openweathermap.org/img/wn/{@Weather1.Weather[0].Icon}@2x.png")"
+     alt="@Weather1.Weather[0].Description">
+
+<p>Today: @Weather1.Weather[0].Description</p>
+
+<p>Temperature: @Weather1.AboutWeather.Temp  °C</p>
+
+<p>Feels Like: @Weather1.AboutWeather.FeelsLike  °C</p>
+
+<p>Sea Level Pressure: @Weather1.AboutWeather.SeaLevelPressure hPa</p>
+
+<p>Ground Level Pressure: @Weather1.AboutWeather.GroundLevelPressure hPa</p>
+
+<p>Humidity: @Weather1.AboutWeather.Humidity %</p>
+
+<p>Visibility: @(Weather1.Visibility.ToString()) km</p>
+
+<p>Wind Speed: @Weather1.Wind.Speed m/s </p>
+
+<p>Wind Gust Speed: @Weather1.Wind.Gust m/s </p>
+
+<p>Wind Direction: @GetWindDirection(Weather1.Wind.Deg) (Weather1.WindInfo.Deg°)</p>
+
+<p>
+    Sunrise: @ConvertToUniversalTime(Weather1.CurrentSunInfo.Sunrise)
+</p>
+
+<p>
+    Sunset: @ConvertToUniversalTime(Weather1.CurrentSunInfo.Sunset)
+</p> *@

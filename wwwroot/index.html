@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0 user-scalable=1.0" />
+    <title>Real-Time Weather Forecast | Live Weather Updates by City</title>
+    <meta name="description"
+          content="Get real-time weather updates for any city worldwide.
+          Check temperature, humidity, wind speed, and forecast details with our live weather app." />
+    <base href="/" />
+    <!--<link rel="stylesheet"
+          href="lib/bootstrap/dist/css/bootstrap.min.css" />-->
+    <link rel="stylesheet"
+          href="css/app.css" />
+    <link rel="icon"
+          sizes="32x32"
+          type="image/png"
+          href="icon_for_weather_forecast_site_small.png" />
+    <meta property="og:title"
+          content="Real-Time Weather Forecast" />
+    <meta property="og:description"
+          content="Get real-time weather updates for any city worldwide" />
+    <meta property="og:image"
+          content="icon_for_weather_forecast_site.png" />
+    <meta property="og:image:alt"
+          content="Sun. Clouds. Rain" />
+    <link rel="apple-touch-icon"
+          sizes="190x190"
+          href="icon_for_weather_forecast_site.png" />
+    <link rel="apple-touch-startup-image" 
+          href="icon_for_weather_forecast_site.png" 
+          media="orientation: portrait" />
+    <link rel="apple-touch-startup-image" 
+          href="icon_for_weather_forecast_site.png" 
+          media="orientation: landscape" />
+</head>
+
+<body>
+    <div id="app">
+        <svg class="loading-progress">
+            <circle r="40%" cx="50%" cy="50%" />
+            <circle r="40%" cx="50%" cy="50%" />
+        </svg>
+        <div class="loading-progress-text"></div>
+    </div>
+
+    <!--<div id="blazor-error-ui">
+        An unhandled error has occurred.
+        <a href="." class="reload">Reload</a>
+        <span class="dismiss">🗙</span>
+    </div>-->
+    <script src="_framework/blazor.webassembly.js"></script>
+</body>
+
+</html>
