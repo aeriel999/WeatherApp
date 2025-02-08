@@ -3,18 +3,30 @@
 @using WeatherApp.Services
 @inject WeatherService WeatherService
 
- 
     <section class="main-part">
         <section class="search-section">
-        <h1>Daily Weather Forecast</h1>
+            <h1>Daily Weather Forecast</h1>
             <div class="search-container">
-                <input class="search-input" type="text" @bind="City" placeholder="Search for location..." />
+                <input id="searchInput" 
+                       class="search-input" 
+                       type="text" @bind="City" 
+                       placeholder="Search for location..." 
+                       autofocus="autofocus" />
                 <button class="search-button" @onclick="GetWeather">
-                    🔍
+                        🔍
                 </button>
             </div>
         </section>
         <section class="weather-container">
+            @if (IsLoading)
+            {
+                <svg class="loading-progress">
+                    <circle r="40%" cx="50%" cy="50%" />
+                    <circle r="40%" cx="50%" cy="50%" />
+                </svg>
+                <div class="loading-progress-text"></div>
+            }
+
             @if (Weather1 != null)
             {
                 <div class="top-weather">
@@ -26,7 +38,7 @@
             <div class="midle-weather">
                 <p>Today: 
                     @DateTime.Now.ToString("dd MMMM", 
-                    new System.Globalization.CultureInfo("en-GB"));</p>
+                    new System.Globalization.CultureInfo("en-GB"))</p>
             </div>
                              
                @*  <p>Today: @Weather1.Weather[0].Description</p>
@@ -72,11 +84,15 @@
 
 @code {
     private string City { get; set; } = string.Empty;
+
     private CurrentWeatherResponse? Weather1 { get; set; }
+
     private string Response { get; set; } = string.Empty;
+
     private ForecastResponse? _forecast;
-    private List<string> _labels = new();
-    private List<double> _chartData = new();
+
+    private bool IsLoading { get; set; } = false;
+
 
     protected override async Task OnInitializedAsync()
     {
@@ -87,6 +103,7 @@
         City = string.Empty;
     }
 
+
     private async Task GetWeather()
     {
         if (string.IsNullOrWhiteSpace(City))
@@ -95,22 +112,23 @@
             return;
         }
 
+        IsLoading = true;
         Weather1 = null;
         Response = string.Empty;
 
         var errorOrResult = await WeatherService.GetWeatherAsync(City);
+        IsLoading = false; // Stop loading after API call
 
         if (errorOrResult.IsError)
         {
-            Response = errorOrResult.FirstError.Code;
+            Response = $"Error: {errorOrResult.FirstError.Code}";
             return;
         }
 
         Weather1 = errorOrResult.Value;
-
-        // Отримати прогноз погоди після успішного запиту
         await FetchForecast();
     }
+
 
     private async Task FetchForecast()
     {
@@ -124,12 +142,41 @@
 
         _forecast = errorOrResult.Value;
 
-        if (_forecast != null)
-        {
-            _labels = _forecast.List.Select(f => f.DateTime.Substring(5, 11)).ToList();
-            _chartData = _forecast.List.Select(f => f.Main.Temperature).ToList();
-        }
     }
+
+    private async Task GetWeatherAndForecast()
+    {
+        if (string.IsNullOrWhiteSpace(City))
+        {
+            Response = "City cannot be empty!";
+            return;
+        }
+
+        Weather1 = null;
+        Response = string.Empty;
+
+        var weatherTask = WeatherService.GetWeatherAsync(City);
+        var forecastTask = WeatherService.GetWeatherForecastAsync(City);
+
+        await Task.WhenAll(weatherTask, forecastTask);
+
+        if (weatherTask.Result.IsError)
+        {
+            Response = $"Error: {weatherTask.Result.FirstError.Code}";
+            return;
+        }
+
+        Weather1 = weatherTask.Result.Value;
+
+        if (forecastTask.Result.IsError)
+        {
+            Response = $"Error: {forecastTask.Result.FirstError.Code}";
+            return;
+        }
+
+       
+    }
+
 
     public string GetWindDirection(double windDeg)
     {
@@ -144,6 +191,7 @@
                 .ToLocalTime().ToString("HH:mm");
     }
 }
+ 
 
 @* <h4>@Weather1.Name</h4>
 

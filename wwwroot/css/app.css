@@ -1,5 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 
+/*Main*/
 html, body {
     font-family: "Poppins", sans-serif;
     margin: 0;
@@ -10,9 +11,10 @@ html, body {
  }
 
 h1 {
+    all:unset;
     font-size: 3rem;
     font-weight: 400;
-    line-height: 4rem;
+    line-height: 6rem;
 }
 
 h2 {
@@ -21,6 +23,7 @@ h2 {
     line-height: 3rem;
 }
 
+/*Weather*/
 .main-part {
     display: flex;
     flex-direction: row;
@@ -78,6 +81,7 @@ h2 {
                     border-radius: 10px;
                     background: transparent;
                     align-self: center;
+                    
                 }
 
                     .search-input::placeholder {
