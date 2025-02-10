@@ -15,10 +15,33 @@ public class ForecastItem
 
     [JsonPropertyName("main")]
     public TemperatureInfo Main { get; set; } = new();
+
+    [JsonPropertyName("weather")]
+    public required List<ForecastCurrentInfo> CurrentWeather { get; set; }
+
+    [JsonPropertyName("wind")]
+    public required ForecastWindInfo Wind { get; set; }
 }
 
 public class TemperatureInfo
 {
     [JsonPropertyName("temp")]
     public double Temperature { get; set; }
+
+    [JsonPropertyName("sea_level")]
+    public int SeaLevelPressure { get; set; }
+}
+
+public class ForecastCurrentInfo
+{
+    [JsonPropertyName("main")]
+    public required string Name { get; set; }
+
+    [JsonPropertyName("icon")]
+    public required string Icon { get; set; }
+}
+
+public class ForecastWindInfo
+{
+    public double Speed { get; set; }
 }

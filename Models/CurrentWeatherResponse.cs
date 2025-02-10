@@ -18,7 +18,7 @@ public class CurrentWeatherResponse
     public int Visibility { get; set; }
 
     [JsonPropertyName("wind")]
-        public required WindInfo Wind { get; set; }
+    public required WindInfo Wind { get; set; }
 
     [JsonPropertyName("sys")]
     public required SunInfo CurrentSunInfo { get; set; }
@@ -52,9 +52,6 @@ public class WeatherInfo
 public class CurrentWeatherInfo
 {
     public double Temp { get; set; }
-
-    [JsonPropertyName("feels_like")]
-    public double FeelsLike { get; set; }
 
     public int Humidity { get; set; }
 
