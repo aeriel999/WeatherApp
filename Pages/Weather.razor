@@ -4,7 +4,6 @@
 @inject WeatherService WeatherService
 @inject IJSRuntime JS
 
-
 <section class="main-part">
     <section class="search-section">
         <h1>Daily Weather Forecast</h1>
@@ -29,36 +28,34 @@
             <div class="loading-progress-text"></div>
         }
 
-        @if (Weather1 != null)
+        @if (WeatherResponse != null)
         {
             <div class="top-weather">
-                <h2>@Weather1.Name</h2>
-                <img src="@($"https://openweathermap.org/img/wn/{@Weather1.Weather[0].Icon}@2x.png")"
-                alt="@Weather1.Weather[0].Description">
-
+                <h2>@WeatherResponse.Name</h2>
+                <img src="@($"https://openweathermap.org/img/wn/{WeatherResponse.Weather[0].Icon}@2x.png")"
+                alt="@WeatherResponse.Weather[0].Description">
             </div>
             <div class="midle-weather">
                 <p class="date">Today, 
                     @DateTime.Now.ToString("dd MMMM", 
-                                                                 new System.Globalization.CultureInfo("en-GB"))</p>
-                <p class="temperature">@Weather1.AboutWeather.Temp°</p>
-                <p class="description">@Weather1.Weather[0].Description.ToUpper()</p>
+                              new System.Globalization.CultureInfo("en-GB"))</p>
+                <p class="temperature">@Math.Round(WeatherResponse.AboutWeather.Temp)°</p>
+                <p class="description">@WeatherResponse.Weather[0].Description.ToUpper()</p>
                 <div class="additional-info">
                     <div class="additional-info-container">
-                        <div class="start-info">@Weather1.Wind.Speed m/s</div>
+                        <div class="start-info">@WeatherResponse.Wind.Speed m/s</div>
                         <div class="separator">|</div>
                         <div class="end-info">Wind</div>
                     </div>
                     <div class="additional-info-container">
                         <div class="start-info">Hum</div>
                         <div class="separator">|</div>
-                        <div class="end-info">@Weather1.AboutWeather.Humidity%</div>
+                        <div class="end-info">@WeatherResponse.AboutWeather.Humidity%</div>
                     </div>
                 </div>
-
             </div>
-
         }
+
         @if (!string.IsNullOrEmpty(Response))
         {
             <h4>@Response</h4>
@@ -82,9 +79,6 @@
             <button class="scroll-btn right" @onclick="ScrollRight">›</button>
         </div>
     }
-
-
-
 </section>
 
 
@@ -109,7 +103,7 @@
 @code {
     private string City { get; set; } = string.Empty;
 
-    private CurrentWeatherResponse? Weather1 { get; set; }
+    private CurrentWeatherResponse? WeatherResponse { get; set; }
 
     private string Response { get; set; } = string.Empty;
 
@@ -117,8 +111,17 @@
 
     private bool IsLoading { get; set; } = false;
 
-    //
     private ElementReference forecastDiv;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        City = "Rivne";
+
+        await GetWeather(); // Викликаємо метод для отримання погоди при завантаженні сторінки
+
+        City = string.Empty;
+    }
 
     private void ScrollLeft()
     {
@@ -130,27 +133,17 @@
         JS.InvokeVoidAsync("scrollForecast", forecastDiv, 400);
     }
 
-  
-    protected override async Task OnInitializedAsync()
-    {
-        City = "Rivne";
-
-        await GetWeather(); // Викликаємо метод для отримання погоди при завантаженні сторінки
-        
-        //City = string.Empty;
-    }
-
-
     private async Task GetWeather()
     {
         if (string.IsNullOrWhiteSpace(City))
         {
+            WeatherResponse = null;
             Response = "City cannot be empty!";
             return;
         }
 
         IsLoading = true;
-        Weather1 = null;
+        WeatherResponse = null;
         Response = string.Empty;
 
         var errorOrResult = await WeatherService.GetWeatherAsync(City);
@@ -158,11 +151,12 @@
 
         if (errorOrResult.IsError)
         {
-            Response = $"Error: {errorOrResult.FirstError.Code}";
+            Response = errorOrResult.FirstError.Code;
             return;
         }
 
-        Weather1 = errorOrResult.Value;
+        WeatherResponse = errorOrResult.Value;
+
         await FetchForecast();
     }
 
@@ -180,40 +174,6 @@
         _forecast = errorOrResult.Value;
 
     }
-
-    private async Task GetWeatherAndForecast()
-    {
-        if (string.IsNullOrWhiteSpace(City))
-        {
-            Response = "City cannot be empty!";
-            return;
-        }
-
-        Weather1 = null;
-        Response = string.Empty;
-
-        var weatherTask = WeatherService.GetWeatherAsync(City);
-        var forecastTask = WeatherService.GetWeatherForecastAsync(City);
-
-        await Task.WhenAll(weatherTask, forecastTask);
-
-        if (weatherTask.Result.IsError)
-        {
-            Response = $"Error: {weatherTask.Result.FirstError.Code}";
-            return;
-        }
-
-        Weather1 = weatherTask.Result.Value;
-
-        if (forecastTask.Result.IsError)
-        {
-            Response = $"Error: {forecastTask.Result.FirstError.Code}";
-            return;
-        }
-
-       
-    }
-
 
     public string GetWindDirection(double windDeg)
     {
