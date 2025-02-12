@@ -72,10 +72,14 @@
     </section>
 </section>
 
-@* Forkasted-Part*@
+@* Forcasted-Part*@
 
 <section class="daily-forcasted">
-    <h2>Hourly Update</h2>
+    <h2>Hourly Update for the Next 5 Days</h2>
+    <p class="forcasted-text">
+        The "Hourly Forecast" section provides detailed weather predictions for the next 5 days,
+        including hourly updates on temperature, precipitation, wind speed, and more. 
+        Stay informed with accurate hourly weather data to plan your day or upcoming days in advance.</p>
     @if (_forecast != null)
     {
         <div class="forecast-container">
@@ -87,13 +91,13 @@
                         <img src="@($"https://openweathermap.org/img/wn/{item.CurrentWeather[0].Icon}@2x.png")"
                              alt="@item.CurrentWeather[0].Name"
                              height="75">
-                        <p>@Math.Round(item.Main.Temperature)°</p>
+                        <p class="hourly-temp">@Math.Round(item.Main.Temperature)°</p>
                         <p>@item.CurrentWeather[0].Name</p>
                         <hr />
                         <div class="forcasted-card-additional-info">
                             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M12 2C8 8 4 10 4 14C4 17.31 6.69 20 10 20C13.31 20 16 17.31 16 14C16 10 12 8 12 2Z" fill="gray" />
-                            </svg> <!-- Humidity -->
+                            </svg>  
                             <p>@item.Main.Humidity%</p>
                             <p>|</p>
                             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -102,7 +106,7 @@
                             </svg>
                             <p>@item.Wind.Speed m/s</p>
                         </div>
-                        <p>@item.DateTime</p>
+                        <p class="date-time-text">@FormatDateTime(@item.DateTime)</p>
                     </div>
                 }
             </div>
@@ -217,6 +221,33 @@
         return DateTimeOffset.FromUnixTimeSeconds(time)
                 .ToLocalTime().ToString("HH:mm");
     }
+
+    private string FormatDateTime(string itemDateTime)
+    {
+        if (DateTime.TryParse(itemDateTime, out DateTime parsedDateTime))
+        {
+            var now = DateTime.Now;
+
+            if (parsedDateTime.Date == now.Date)
+            {
+                return $"Today {parsedDateTime:hh:mm tt}";
+            }
+            else if (parsedDateTime.Date == now.AddDays(1).Date)
+            {
+                return $"Tomorrow {parsedDateTime:hh:mm tt}";
+            }
+            else
+            {
+                return parsedDateTime.ToString("dddd hh:mm tt"); // Example: "Monday 09:00 AM"
+            }
+        }
+        else
+        {
+            return "Invalid Date"; // Or handle the error as needed
+        }
+    }
+
+
 }
 
 

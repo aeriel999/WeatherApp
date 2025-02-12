@@ -7,6 +7,7 @@ html, body {
     display: flex;
     flex-direction: column;
     min-width: 1000px;
+   
  }
 
 h1 {
@@ -19,7 +20,7 @@ h1 {
 h2 {
     font-size: 3rem;
     font-weight: 400;
-    line-height: 1;
+    margin:0;
 }
 
 h3 {
@@ -39,15 +40,10 @@ h5 {
     line-height: 1;
 }
 
-.info-text {
-    font-size: 18px;
-    font-weight: 400;
-}
 
 /*Weather-part*/
 .main-part {
     display: flex;
-    flex-wrap: wrap;
     justify-content: center;
     align-items: center;
     margin: 0;
@@ -81,6 +77,11 @@ h5 {
             align-items: start;
             justify-content: center;
             margin: 20px;
+        }
+
+        .info-text {
+            font-size: 18px;
+            font-weight: 400;
         }
 
             .search-container {
@@ -157,33 +158,33 @@ h5 {
                 gap: 25px;
             }
 
-.date {
-    all: unset;
-    font-size: 20px;
-    font-weight: 600;
-}
+            .date {
+                all: unset;
+                font-size: 20px;
+                font-weight: 600;
+            }
 
-.temperature {
-    all: unset;
-    font-size: 4rem;
-    font-weight: 600;
-    line-height: 1;
-}
+            .temperature {
+                all: unset;
+                font-size: 4rem;
+                font-weight: 600;
+                line-height: 1;
+            }
 
-.description {
-    all: unset;
-    font-size: 20px;
-    font-weight: 700;
-}
+            .description {
+                all: unset;
+                font-size: 20px;
+                font-weight: 700;
+            }
 
-.additional-info {
-    all: unset;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-}
+            .additional-info {
+                all: unset;
+                width: 100%;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+            }
 
                 .additional-info-container {
                     display: flex;
@@ -205,6 +206,8 @@ h5 {
                         width: 33%;
                     }
 
+/*Forcasted-Part*/
+
 .daily-forcasted {
     width: 100%;
     display: flex;
@@ -212,68 +215,84 @@ h5 {
     justify-content: center;
     align-items: center;
     position: relative;
+    margin-top: 30px
 }
 
-.forecast-container {
+.forcasted-text {
     width: 70%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    gap: 10px;
-}
-
-.scroll-btn {
-    background: transparent;
-    border: none;
-    font-size: 24px;
-    cursor: pointer;
-    color: #333;
-    padding: 10px;
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-}
-
-    .scroll-btn.left {
-        left: 0;
-    }
-
-    .scroll-btn.right {
-        right: 0;
-    }
-
-.forecast-wrapper {
-    display: flex;
-    overflow-x: auto;
-    scroll-behavior: smooth;
-    white-space: nowrap;
-    padding: 10px;
-    gap: 10px;
-    width: 80%;
-    overflow: hidden;
-}
-
-.forecast-card {
-    /* background: #f4f4f4;*/
-    /* padding: 10px;*/
-    border-radius: 8px;
-    min-width: 120px;
+    color:darkgray;
+    font-size: 16x;
     text-align: center;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    /*height: 200px;*/
-    background-color: #e6e6e6;
 }
+    .forecast-container {
+        width: 70%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        gap: 10px;
+    }
 
-.forcasted-card-additional-info {
-    display: flex;
-    flex-direction: row;
-    justify-content:center;
-    align-items: center;
-    gap: 3px;
-    font-size: 10px;
-}
+        .scroll-btn {
+            background: transparent;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #333;
+            padding: 10px;
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+        }
 
+        .scroll-btn.left {
+            left: 0;
+        }
+
+        .scroll-btn.right {
+            right: 0;
+        }
+
+        .forecast-wrapper {
+            display: flex;
+            overflow-x: auto;
+            scroll-behavior: smooth;
+            white-space: nowrap;
+            padding: 10px;
+            gap: 10px;
+            width: 90%;
+            overflow: hidden;
+        }
+
+            .forecast-card {
+                border-radius: 8px;
+                padding:10px;
+                min-width: 150px;
+                text-align: center;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                background-color: #e6e6e6;
+            }
+
+                .hourly-temp {
+                    margin:0;
+                    padding:0;
+                    font-size:25px;
+                    font-weight: 500;
+                }
+
+                .forcasted-card-additional-info {
+                    display: flex;
+                    flex-direction: row;
+                    justify-content:center;
+                    align-items: center;
+                    gap: 3px;
+                    font-size: 13px;
+                }
+
+                .date-time-text {
+                    font-size: 13px;
+                    font-weight: 500;
+                }
 /*#blazor-error-ui {
     color-scheme: light only;
     background: lightyellow;
