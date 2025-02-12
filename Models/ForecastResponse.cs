@@ -28,8 +28,7 @@ public class TemperatureInfo
     [JsonPropertyName("temp")]
     public double Temperature { get; set; }
 
-    [JsonPropertyName("sea_level")]
-    public int SeaLevelPressure { get; set; }
+    public int Humidity { get; set; }
 }
 
 public class ForecastCurrentInfo

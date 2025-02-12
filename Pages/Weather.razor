@@ -4,15 +4,24 @@
 @inject WeatherService WeatherService
 @inject IJSRuntime JS
 
+@* Weather-part *@
+
 <section class="main-part">
     <section class="search-section">
-        <h1>Daily Weather Forecast</h1>
+        <h1>Daily Weather Forecast
+            <br />
+            Update News
+        </h1>
+        <p class="info-text">
+            Get real-time updates on temperature, precipitation,
+            <br />
+            and other essential weather details to plan your day with confidence.</p>
         <div class="search-container">
             <input id="searchInput" 
-            class="search-input" 
-            type="text" @bind="City" 
-            placeholder="Search for location..." 
-            autofocus="autofocus" />
+                    class="search-input" 
+                    type="text" @bind="City" 
+                    placeholder="Search for location..." 
+                    autofocus="autofocus" />
             <button class="search-button" @onclick="GetWeather">
                 🔍
             </button>
@@ -31,15 +40,15 @@
         @if (WeatherResponse != null)
         {
             <div class="top-weather">
-                <h2>@WeatherResponse.Name</h2>
+                <h4>@WeatherResponse.Name</h4>
                 <img src="@($"https://openweathermap.org/img/wn/{WeatherResponse.Weather[0].Icon}@2x.png")"
                 alt="@WeatherResponse.Weather[0].Description">
             </div>
             <div class="midle-weather">
-                <p class="date">Today, 
+                <h5 class="date">Today, 
                     @DateTime.Now.ToString("dd MMMM", 
-                              new System.Globalization.CultureInfo("en-GB"))</p>
-                <p class="temperature">@Math.Round(WeatherResponse.AboutWeather.Temp)°</p>
+                              new System.Globalization.CultureInfo("en-GB"))</h5>
+                <h2 class="temperature">@Math.Round(WeatherResponse.AboutWeather.Temp)°</h2>
                 <p class="description">@WeatherResponse.Weather[0].Description.ToUpper()</p>
                 <div class="additional-info">
                     <div class="additional-info-container">
@@ -63,6 +72,8 @@
     </section>
 </section>
 
+@* Forkasted-Part*@
+
 <section class="daily-forcasted">
     <h2>Hourly Update</h2>
     @if (_forecast != null)
@@ -73,6 +84,25 @@
                 @foreach (var item in _forecast.List)
                 {
                     <div class="forecast-card">
+                        <img src="@($"https://openweathermap.org/img/wn/{item.CurrentWeather[0].Icon}@2x.png")"
+                             alt="@item.CurrentWeather[0].Name"
+                             height="75">
+                        <p>@Math.Round(item.Main.Temperature)°</p>
+                        <p>@item.CurrentWeather[0].Name</p>
+                        <hr />
+                        <div class="forcasted-card-additional-info">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 2C8 8 4 10 4 14C4 17.31 6.69 20 10 20C13.31 20 16 17.31 16 14C16 10 12 8 12 2Z" fill="gray" />
+                            </svg> <!-- Humidity -->
+                            <p>@item.Main.Humidity%</p>
+                            <p>|</p>
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M3 10H14C15.66 10 17 8.66 17 7C17 5.34 15.66 4 14 4C12.9 4 12 4.9 12 6" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                <path d="M3 18H12C13.66 18 15 16.66 15 15C15 13.34 13.66 12 12 12C10.9 12 10 12.9 10 14" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                            </svg>
+                            <p>@item.Wind.Speed m/s</p>
+                        </div>
+                        <p>@item.DateTime</p>
                     </div>
                 }
             </div>
