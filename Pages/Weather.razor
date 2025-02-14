@@ -7,404 +7,392 @@
 @* Weather-part *@
 
 <section class="main-part">
-    <section class="search-section">
-        <h1>Daily Weather Forecast
-            <br />
-            Update News
-        </h1>
-        <p class="info-text">
-            Get real-time updates on temperature, precipitation,
-            <br />
-            and other essential weather details to plan your day with confidence.</p>
-        <div class="search-container">
-            <input id="searchInput" 
-            class="search-input" 
-            type="text" @bind="City" 
-            placeholder="Search for location..." 
-            autofocus="autofocus" />
-            <button class="search-button" @onclick="GetWeather">
-                🔍
-            </button>
-        </div>
-    </section>
-    <section class="weather-container">
-        @if (IsLoading)
-        {
-            <svg class="loading-progress">
-                <circle r="40%" cx="50%" cy="50%" />
-                <circle r="40%" cx="50%" cy="50%" />
-            </svg>
-            <div class="loading-progress-text"></div>
-        }
+	<section class="search-section">
+		<h1>
+			Daily Weather Forecast
+			<br />
+			Update News
+		</h1>
+		<p class="info-text">
+			Get real-time updates on temperature, precipitation,
+			<br />
+			and other essential weather details to plan your day with confidence.
+		</p>
+		<div class="search-container">
+			<input id="searchInput"
+				   class="search-input"
+				   type="text" @bind="City"
+				   placeholder="Search for location..."
+				   autofocus="autofocus" />
+			<button class="search-button" @onclick="GetWeather">
+				🔍
+			</button>
+		</div>
+	</section>
+	<section class="weather-container">
+		@if (IsLoading)
+		{
+			<svg class="loading-progress">
+				<circle r="40%" cx="50%" cy="50%" />
+				<circle r="40%" cx="50%" cy="50%" />
+			</svg>
+			<div class="loading-progress-text"></div>
+		}
 
-        @if (WeatherResponse != null)
-        {
-            <div class="top-weather">
-                <h4>@WeatherResponse.Name</h4>
-                <img src="@($"https://openweathermap.org/img/wn/{WeatherResponse.Weather[0].Icon}@2x.png")"
-                alt="@WeatherResponse.Weather[0].Description">
-            </div>
-            <div class="midle-weather">
-                <h5 class="date">Today, 
-                    @DateTime.Now.ToString("dd MMMM", 
-                                       new System.Globalization.CultureInfo("en-GB"))</h5>
-                <h2 class="temperature">@Math.Round(WeatherResponse.AboutWeather.Temp)°</h2>
-                <p class="description">@WeatherResponse.Weather[0].Description.ToUpper()</p>
-                <div class="additional-info">
-                    <div class="additional-info-container">
-                        <div class="start-info">@WeatherResponse.Wind.Speed m/s</div>
-                        <div class="separator">|</div>
-                        <div class="end-info">Wind</div>
-                    </div>
-                    <div class="additional-info-container">
-                        <div class="start-info">Hum</div>
-                        <div class="separator">|</div>
-                        <div class="end-info">@WeatherResponse.AboutWeather.Humidity%</div>
-                    </div>
-                </div>
-            </div>
-        }
+		@if (WeatherResponse != null)
+		{
+			<div class="top-weather">
+				<h4>@WeatherResponse.Name</h4>
+				<img src="@($"https://openweathermap.org/img/wn/{WeatherResponse.Weather[0].Icon}@2x.png")"
+					 alt="@WeatherResponse.Weather[0].Description">
+			</div>
+			<div class="midle-weather">
+				<h5 class="date">
+					Today,
+					@DateTime.Now.ToString("dd MMMM",
+										new System.Globalization.CultureInfo("en-GB"))
+				</h5>
+				<h2 class="temperature">@Math.Round(WeatherResponse.AboutWeather.Temp)°</h2>
+				<p class="description">@WeatherResponse.Weather[0].Description.ToUpper()</p>
+				<div class="additional-info">
+					<div class="additional-info-container">
+						<div class="start-info">@Math.Round(@WeatherResponse.Wind.Speed) m/s</div>
+						<div class="separator">|</div>
+						<div class="end-info">Wind</div>
+					</div>
+					<div class="additional-info-container">
+						<div class="start-info">Hum</div>
+						<div class="separator">|</div>
+						<div class="end-info">@WeatherResponse.AboutWeather.Humidity%</div>
+					</div>
+				</div>
+			</div>
+		}
 
-        @if (!string.IsNullOrEmpty(Response))
-        {
-            <h4>@Response</h4>
-        }
-    </section>
+		@if (!string.IsNullOrEmpty(Response))
+		{
+			<h4>@Response</h4>
+		}
+	</section>
 </section>
 
 @* Forcasted-Part*@
 
 <section class="container-for-weather-details">
-    <h2>Hourly Update for the Next 5 Days</h2>
-    <p class="details-text">
-        The "Hourly Forecast" section provides detailed weather predictions for the next 5 days,
-        including hourly updates on temperature, precipitation, wind speed, and more. 
-        Stay informed with accurate hourly weather data to plan your day or upcoming days in advance.</p>
-    @if (_forecast != null)
-    {
-        <div class="forecast-container">
-            <button class="scroll-btn left" @onclick="ScrollLeft">‹</button>
-            <div class="forecast-wrapper" @ref="forecastDiv">
-                @foreach (var item in _forecast.List)
-                {
-                    <div class="forecast-card">
-                        <img src="@($"https://openweathermap.org/img/wn/{item.CurrentWeather[0].Icon}@2x.png")"
-                        alt="@item.CurrentWeather[0].Name"
-                        height="75">
-                        <p class="hourly-temp">@Math.Round(item.Main.Temperature)°</p>
-                        <p>@item.CurrentWeather[0].Name</p>
-                        <hr />
-                        <div class="forcasted-card-additional-info">
-                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M12 2C8 8 4 10 4 14C4 17.31 6.69 20 10 20C13.31 20 16 17.31 16 14C16 10 12 8 12 2Z" fill="gray" />
-                            </svg>  
-                            <p>@item.Main.Humidity%</p>
-                            <p>|</p>
-                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M3 10H14C15.66 10 17 8.66 17 7C17 5.34 15.66 4 14 4C12.9 4 12 4.9 12 6" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                                <path d="M3 18H12C13.66 18 15 16.66 15 15C15 13.34 13.66 12 12 12C10.9 12 10 12.9 10 14" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                            </svg>
-                            <p>@item.Wind.Speed m/s</p>
-                        </div>
-                        <p class="date-time-text">@FormatDateTime(@item.DateTime)</p>
-                    </div>
-                }
-            </div>
-            <button class="scroll-btn right" @onclick="ScrollRight">›</button>
-        </div>
-    }
+	<h2>Hourly Update for the Next 5 Days</h2>
+	<p class="details-text">
+		The "Hourly Forecast" section provides detailed weather predictions for the next 5 days,
+		including hourly updates on temperature, precipitation, wind speed, and more.
+		Stay informed with accurate hourly weather data to plan your day or upcoming days in advance.
+	</p>
+	@if (_forecast != null)
+	{
+		<div class="forecast-container">
+			<button class="scroll-btn left" @onclick="ScrollLeft">‹</button>
+			<div class="forecast-wrapper" @ref="forecastDiv">
+				@foreach (var item in _forecast.List)
+				{
+					<div class="forecast-card">
+						<img src="@($"https://openweathermap.org/img/wn/{item.CurrentWeather[0].Icon}@2x.png")"
+							 alt="@item.CurrentWeather[0].Name"
+							 height="75">
+						<p class="hourly-temp">@Math.Round(item.Main.Temperature)°</p>
+						<p>@item.CurrentWeather[0].Name</p>
+						<hr />
+						<div class="forcasted-card-additional-info">
+							<svg width="15" height="15" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+								<path d="M12 2C8 8 4 10 4 14C4 17.31 6.69 20 10 20C13.31 20 16 17.31 16 14C16 10 12 8 12 2Z" fill="gray" />
+							</svg>
+							<p>@item.Main.Humidity%</p>
+							<p>|</p>
+							<svg width="15" height="15" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+								<path d="M3 10H14C15.66 10 17 8.66 17 7C17 5.34 15.66 4 14 4C12.9 4 12 4.9 12 6" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+								<path d="M3 18H12C13.66 18 15 16.66 15 15C15 13.34 13.66 12 12 12C10.9 12 10 12.9 10 14" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+							</svg>
+							<p>@item.Wind.Speed m/s</p>
+						</div>
+						<p class="date-time-text">@FormatDateTime(@item.DateTime)</p>
+					</div>
+				}
+			</div>
+			<button class="scroll-btn right" @onclick="ScrollRight">›</button>
+		</div>
+	}
 </section>
 
 @* Weather-Details *@
 
 <section class="container-for-weather-details">
-    <h2>Today Weather Details</h2>
-    <p class="details-text">
-        The "Today Weather Details" section provides a comprehensive overview 
-        of the current weather conditions for your selected location.
-        Get real-time updates on temperature, humidity, wind speed, and precipitation throughout the day. 
-        Stay prepared with accurate weather insights to plan your activities accordingly.
-    </p>
-    <div class="weather-details-main-container">
-        @if (IsLoading)
-        {
-            <svg class="loading-progress">
-                <circle r="40%" cx="50%" cy="50%" />
-                <circle r="40%" cx="50%" cy="50%" />
-            </svg>
-            <div class="loading-progress-text"></div>
-        }
+	<h2>Today Weather Details</h2>
+	<p class="details-text">
+		The "Today Weather Details" section provides a comprehensive overview
+		of the current weather conditions for your selected location.
+		Get real-time updates on temperature, humidity, wind speed, and precipitation throughout the day.
+		Stay prepared with accurate weather insights to plan your activities accordingly.
+	</p>
+	<div class="weather-details-main-container">
+		@if (IsLoading)
+		{
+			<svg class="loading-progress">
+				<circle r="40%" cx="50%" cy="50%" />
+				<circle r="40%" cx="50%" cy="50%" />
+			</svg>
+			<div class="loading-progress-text"></div>
+		}
 
-        @if (!string.IsNullOrEmpty(Response))
-        {
-            <h4>@Response</h4>
-        }
+		@if (!string.IsNullOrEmpty(Response))
+		{
+			<h4>@Response</h4>
+		}
 
-        @if (WeatherResponse != null)
-        {
-             <div class="weather-details-left-column">
-                <div class="box large">
-                    <div class="weather-container">
-                            <div class="top-weather">
-                                <h4>@WeatherResponse.Name</h4>
-                                <img src="@($"https://openweathermap.org/img/wn/{WeatherResponse.Weather[0].Icon}@2x.png")"
-                                     alt="@WeatherResponse.Weather[0].Description">
-                            </div>
-                            <div class="midle-weather">
-                                <h5 class="date">
-                                    Today,
-                                    @DateTime.Now.ToString("dd MMMM",
-                                             new System.Globalization.CultureInfo("en-GB"))
-                                </h5>
-                                <h2 class="temperature">@Math.Round(WeatherResponse.AboutWeather.Temp)°</h2>
-                                <p class="description">@WeatherResponse.Weather[0].Description.ToUpper()</p>
-                                <div class="additional-info">
-                                    <div class="additional-info-container">
-                                        <div class="start-info">@WeatherResponse.Wind.Speed m/s</div>
-                                        <div class="separator">|</div>
-                                        <div class="end-info">Wind</div>
-                                    </div>
-                                    <div class="additional-info-container">
-                                        <div class="start-info">Hum</div>
-                                        <div class="separator">|</div>
-                                        <div class="end-info">@WeatherResponse.AboutWeather.Humidity%</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                </div>
-             </div>
-            <div class="weather-details-right-column">
-                    <div class="top-row">
-                        <div class="box small">
-                            <div class="container-part">
-                                <div>
-                                    <p>Wind Gust Speed:  </p>
-                                    <p>@WeatherResponse!.Wind.Gust m/s</p>
-                                </div>
-                                <svg width="75" height="75" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M20 30H65C75 30 80 25 80 20C80 15 75 10 70 10C65 10 60 13 58 17" stroke="black" stroke-width="6" stroke-linecap="round" />
-                                    <path d="M20 50H75C85 50 90 45 90 40C90 35 85 30 80 30C75 30 70 33 68 37" stroke="black" stroke-width="6" stroke-linecap="round" />
-                                    <path d="M20 70H55C65 70 70 65 70 60C70 55 65 50 60 50C55 50 50 53 48 57" stroke="black" stroke-width="6" stroke-linecap="round" />
-                                    <path d="M30 85C40 85 50 80 55 75" stroke="black" stroke-width="4" stroke-linecap="round" stroke-dasharray="6 6" />
-                                    <path d="M60 90C70 90 80 85 85 80" stroke="black" stroke-width="4" stroke-linecap="round" stroke-dasharray="6 6" />
-                                </svg>
-                            </div>
-                            <div class="container-part">
-                                <svg width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <circle cx="50" cy="50" r="40" stroke="black" stroke-width="4" fill="none" />
-                                    <polygon points="50,15 40,35 50,30 60,35" fill="black"
-                                             transform="rotate(@WeatherResponse!.Wind.Deg 50 50)" />
-                                    <circle cx="50" cy="50" r="5" fill="black" />
-                                </svg>
-                                <div>
-                                    <p>Wind Direction:</p>
-                                    <p class="wind-direction">
-                                        @GetWindDirection(WeatherResponse!.Wind.Deg)
-                                    </p>
-                                </div>
-
-
-                            </div>
-                        </div>
-                        <div class="box small">
-                        <div class="container-part">
-                            <div>
-                                <p>Visibility:  </p>
-                                <p>@(WeatherResponse.Visibility.ToString()) km</p>
-                            </div>
-                            <svg width="100" height="100" viewBox="0 0 120 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <!-- Outer eye shape -->
-                                <path d="M10 50C20 30 40 15 60 15C80 15 100 30 110 50C100 70 80 85 60 85C40 85 20 70 10 50Z"
-                                      stroke="black" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round" />
-
-                                <!-- Pupil -->
-                                <circle cx="60" cy="50" r="15" fill="black" stroke="black" stroke-width="6" />
-
-                                <!-- Eyeball highlight -->
-                                <circle cx="67" cy="43" r="5" fill="white" />
-                            </svg>
-
-                        </div>
-                        <div class="container-part">
-                            <svg width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <!-- Barometer Circle -->
-                                <circle cx="50" cy="35" r="25" stroke="black" stroke-width="4" fill="none" />
-
-                                <!-- Pressure Needle -->
-                                <line x1="50" y1="35" x2="65" y2="20" stroke="black" stroke-width="3" stroke-linecap="round" />
-
-                                <!-- Small center dot -->
-                                <circle cx="50" cy="35" r="3" fill="black" />
-
-                                <!-- Waves for Sea Level -->
-                                <path d="M10 80C20 70 30 70 40 80C50 90 60 90 70 80C80 70 90 70 100 80" stroke="blue" stroke-width="4" fill="none" />
-                            </svg>
+		@if (WeatherResponse != null)
+		{
+			<div class="weather-details-left-column">
+				<div class="box large">
+					<div class="weather-container">
+						<div class="top-weather">
+							<h4>@WeatherResponse.Name</h4>
+							<img src="@($"https://openweathermap.org/img/wn/{WeatherResponse.Weather[0].Icon}@2x.png")"
+								 alt="@WeatherResponse.Weather[0].Description">
+						</div>
+						<div class="midle-weather">
+							<h5 class="date">
+								Today,
+								@DateTime.Now.ToString("dd MMMM",
+								new System.Globalization.CultureInfo("en-GB"))
+							</h5>
+							<h2 class="temperature">@Math.Round(WeatherResponse.AboutWeather.Temp)°</h2>
+							<p class="description">@WeatherResponse.Weather[0].Description.ToUpper()</p>
+							<div class="additional-info">
+								<div class="additional-info-container">
+									<div class="start-info">@Math.Round(@WeatherResponse.Wind.Speed) m/s</div>
+									<div class="separator">|</div>
+									<div class="end-info">Wind</div>
+								</div>
+								<div class="additional-info-container">
+									<div class="start-info">Hum</div>
+									<div class="separator">|</div>
+									<div class="end-info">@WeatherResponse.AboutWeather.Humidity%</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="weather-details-right-column">
+				<div class="top-row">
+					<div class="box small">
+						<div class="container-part">
+							<div>
+								<p>Wind Gust Speed:  </p>
+								<p>@Math.Round(@WeatherResponse.Wind.Gust) m/s</p>
+							</div>
+							<svg width="75" height="75" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+								<path d="M20 30H65C75 30 80 25 80 20C80 15 75 10 70 10C65 10 60 13 58 17" stroke="black" stroke-width="6" stroke-linecap="round" />
+								<path d="M20 50H75C85 50 90 45 90 40C90 35 85 30 80 30C75 30 70 33 68 37" stroke="black" stroke-width="6" stroke-linecap="round" />
+								<path d="M20 70H55C65 70 70 65 70 60C70 55 65 50 60 50C55 50 50 53 48 57" stroke="black" stroke-width="6" stroke-linecap="round" />
+								<path d="M30 85C40 85 50 80 55 75" stroke="black" stroke-width="4" stroke-linecap="round" stroke-dasharray="6 6" />
+								<path d="M60 90C70 90 80 85 85 80" stroke="black" stroke-width="4" stroke-linecap="round" stroke-dasharray="6 6" />
+							</svg>
+						</div>
+						<div class="container-part">
+							<svg width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+								<circle cx="50" cy="50" r="40" stroke="black" stroke-width="4" fill="none" />
+								<polygon points="50,15 40,35 50,30 60,35" fill="black"
+										 transform="rotate(@WeatherResponse!.Wind.Deg 50 50)" />
+								<circle cx="50" cy="50" r="5" fill="black" />
+							</svg>
+							<div>
+								<p>Wind Direction:</p>
+								<p class="wind-direction">
+									@GetWindDirection(WeatherResponse.Wind.Deg)
+								</p>
+							</div>
 
 
-                            <div>
-                                <p>Sea Level Pressure: </p>
-                                <p >
-                                    @WeatherResponse.AboutWeather.SeaLevelPressure hPa
-                                </p>
-                            </div>
+						</div>
+					</div>
+					<div class="box small">
+						<div class="container-part">
+							<div>
+								<p>Visibility:  </p>
+								<p>@WeatherResponse.Visibility m</p>
+							</div>
+							<svg width="100" height="100" viewBox="0 0 120 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+								<path d="M10 50C20 30 40 15 60 15C80 15 100 30 110 50C100 70 80 85 60 85C40 85 20 70 10 50Z"
+									  stroke="black" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round" />
+								<circle cx="60" cy="50" r="15" fill="black" stroke="black" stroke-width="6" />
+								<circle cx="67" cy="43" r="5" fill="white" />
+							</svg>
+
+						</div>
+						<div class="container-part">
+							<svg width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+								<circle cx="50" cy="35" r="25" stroke="black" stroke-width="4" fill="none" />
+								<line x1="50" y1="35" x2="65" y2="20" stroke="black" stroke-width="3" stroke-linecap="round" />
+								<circle cx="50" cy="35" r="3" fill="black" />
+								<path d="M10 80C20 70 30 70 40 80C50 90 60 90 70 80C80 70 90 70 100 80" stroke="blue" stroke-width="4" fill="none" />
+							</svg>
 
 
-                        </div>
-                        </div>
-                    </div>
-                <div class="box full-width">
-                    <p>
-                        Sunrise: @ConvertToUniversalTime(WeatherResponse.CurrentSunInfo.Sunrise)
-                    </p>
-                    <svg width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <!-- Sun -->
-                        <circle cx="50" cy="50" r="20" fill="yellow" stroke="black" stroke-width="4" />
-                        <!-- Rays -->
-                        <line x1="50" y1="10" x2="50" y2="30" stroke="black" stroke-width="4" />
-                        <line x1="10" y1="50" x2="30" y2="50" stroke="black" stroke-width="4" />
-                        <line x1="90" y1="50" x2="70" y2="50" stroke="black" stroke-width="4" />
-                        <line x1="50" y1="90" x2="50" y2="70" stroke="black" stroke-width="4" />
-                        <!-- Horizon Line -->
-                        <line x1="10" y1="80" x2="90" y2="80" stroke="black" stroke-width="4" />
-                        <!-- Sun Rising -->
-                        <path d="M30 80 Q50 50 70 80" stroke="black" stroke-width="4" fill="yellow" />
-                    </svg>
-                    <p>
-                        Sunset: @ConvertToUniversalTime(WeatherResponse.CurrentSunInfo.Sunset)
-                    </p>
-                    <svg width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <!-- Sun -->
-                        <circle cx="50" cy="50" r="20" fill="orange" stroke="black" stroke-width="4" />
-                        <!-- Rays -->
-                        <line x1="50" y1="10" x2="50" y2="30" stroke="black" stroke-width="4" />
-                        <line x1="10" y1="50" x2="30" y2="50" stroke="black" stroke-width="4" />
-                        <line x1="90" y1="50" x2="70" y2="50" stroke="black" stroke-width="4" />
-                        <line x1="50" y1="90" x2="50" y2="70" stroke="black" stroke-width="4" />
-                        <!-- Horizon Line -->
-                        <line x1="10" y1="80" x2="90" y2="80" stroke="black" stroke-width="4" />
-                        <!-- Sun Setting -->
-                        <path d="M30 80 Q50 110 70 80" stroke="black" stroke-width="4" fill="orange" />
-                    </svg>
-                </div>
-                </div>
-        }
-    </div>
+							<div>
+								<p>Sea Level Pressure: </p>
+								<p>
+									@WeatherResponse.AboutWeather.SeaLevelPressure hPa
+								</p>
+							</div>
+
+
+						</div>
+					</div>
+				</div>
+				<div class="box full-width">
+					<p>
+						Sunrise: @ConvertToUniversalTime(WeatherResponse.CurrentSunInfo.Sunrise)
+					</p>
+					<svg width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+						<circle cx="50" cy="50" r="20" fill="yellow" stroke="black" stroke-width="4" />
+						<line x1="50" y1="10" x2="50" y2="30" stroke="black" stroke-width="4" />
+						<line x1="10" y1="50" x2="30" y2="50" stroke="black" stroke-width="4" />
+						<line x1="90" y1="50" x2="70" y2="50" stroke="black" stroke-width="4" />
+						<line x1="50" y1="90" x2="50" y2="70" stroke="black" stroke-width="4" />
+						<line x1="10" y1="80" x2="90" y2="80" stroke="black" stroke-width="4" />
+						<path d="M30 80 Q50 50 70 80" stroke="black" stroke-width="4" fill="yellow" />
+					</svg>
+					<p>
+						Sunset: @ConvertToUniversalTime(WeatherResponse.CurrentSunInfo.Sunset)
+					</p>
+					<svg width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+						<circle cx="50" cy="50" r="20" fill="orange" stroke="black" stroke-width="4" />
+						<line x1="50" y1="10" x2="50" y2="30" stroke="black" stroke-width="4" />
+						<line x1="10" y1="50" x2="30" y2="50" stroke="black" stroke-width="4" />
+						<line x1="90" y1="50" x2="70" y2="50" stroke="black" stroke-width="4" />
+						<line x1="50" y1="90" x2="50" y2="70" stroke="black" stroke-width="4" />
+						<line x1="10" y1="80" x2="90" y2="80" stroke="black" stroke-width="4" />
+						<path d="M30 80 Q50 110 70 80" stroke="black" stroke-width="4" fill="orange" />
+					</svg>
+				</div>
+			</div>
+		}
+	</div>
 </section>
 
 
 @code {
-    private string City { get; set; } = string.Empty;
+	private string City { get; set; } = string.Empty;
 
-    private CurrentWeatherResponse? WeatherResponse { get; set; }
+	private CurrentWeatherResponse? WeatherResponse { get; set; }
 
-    private string Response { get; set; } = string.Empty;
+	private string Response { get; set; } = string.Empty;
 
-    private ForecastResponse? _forecast;
+	private ForecastResponse? _forecast;
 
-    private bool IsLoading { get; set; } = false;
+	private bool IsLoading { get; set; } = false;
 
-    private ElementReference forecastDiv;
-
-
-    protected override async Task OnInitializedAsync()
-    {
-        City = "Rivne";
-
-        await GetWeather(); // Викликаємо метод для отримання погоди при завантаженні сторінки
-
-        City = string.Empty;
-    }
-
-    private void ScrollLeft()
-    {
-        JS.InvokeVoidAsync("scrollForecast", forecastDiv, -400);
-    }
-
-    private void ScrollRight()
-    {
-        JS.InvokeVoidAsync("scrollForecast", forecastDiv, 400);
-    }
-
-    private async Task GetWeather()
-    {
-        if (string.IsNullOrWhiteSpace(City))
-        {
-            WeatherResponse = null;
-            Response = "City cannot be empty!";
-            return;
-        }
-
-        IsLoading = true;
-        WeatherResponse = null;
-        Response = string.Empty;
-
-        var errorOrResult = await WeatherService.GetWeatherAsync(City);
-        IsLoading = false; // Stop loading after API call
-
-        if (errorOrResult.IsError)
-        {
-            Response = errorOrResult.FirstError.Code;
-            return;
-        }
-
-        WeatherResponse = errorOrResult.Value;
-
-        await FetchForecast();
-    }
+	private ElementReference forecastDiv;
 
 
-    private async Task FetchForecast()
-    {
-        var errorOrResult = await WeatherService.GetWeatherForecastAsync(City);
+	protected override async Task OnInitializedAsync()
+	{
+		City = "Rivne";
 
-        if (errorOrResult.IsError)
-        {
-            Response = errorOrResult.FirstError.Code;
-            return;
-        }
+		await GetWeather(); 
 
-        _forecast = errorOrResult.Value;
+		City = string.Empty;
+	}
 
-    }
+	private void ScrollLeft()
+	{
+		JS.InvokeVoidAsync("scrollForecast", forecastDiv, -400);
+	}
 
-    public string GetWindDirection(double windDeg)
-    {
-        string[] directions = { "N", "NE", "E", "SE", "S", "SW", "W", "NW", "N" };
-        int index = (int)Math.Round(windDeg / 45.0) % 8;
-        return directions[index];
-    }
+	private void ScrollRight()
+	{
+		JS.InvokeVoidAsync("scrollForecast", forecastDiv, 400);
+	}
 
-    public string ConvertToUniversalTime(int time)
-    {
-        return DateTimeOffset.FromUnixTimeSeconds(time)
-                .ToLocalTime().ToString("HH:mm");
-    }
+	private async Task GetWeather()
+	{
+		if (string.IsNullOrWhiteSpace(City))
+		{
+			WeatherResponse = null;
 
-    private string FormatDateTime(string itemDateTime)
-    {
-        if (DateTime.TryParse(itemDateTime, out DateTime parsedDateTime))
-        {
-            var now = DateTime.Now;
+			Response = "City cannot be empty!";
 
-            if (parsedDateTime.Date == now.Date)
-            {
-                return $"Today {parsedDateTime:hh:mm tt}";
-            }
-            else if (parsedDateTime.Date == now.AddDays(1).Date)
-            {
-                return $"Tomorrow {parsedDateTime:hh:mm tt}";
-            }
-            else
-            {
-                return parsedDateTime.ToString("dddd hh:mm tt"); // Example: "Monday 09:00 AM"
-            }
-        }
-        else
-        {
-            return "Invalid Date"; // Or handle the error as needed
-        }
-    }
+			return;
+		}
+
+		IsLoading = true;
+		WeatherResponse = null;
+		Response = string.Empty;
+
+		var errorOrResult = await WeatherService.GetWeatherAsync(City);
+
+		IsLoading = false; 
+
+		if (errorOrResult.IsError)
+		{
+			Response = errorOrResult.FirstError.Code;
+			return;
+		}
+
+		WeatherResponse = errorOrResult.Value;
+
+		await FetchForecast();
+	}
+
+
+	private async Task FetchForecast()
+	{
+		var errorOrResult = await WeatherService.GetWeatherForecastAsync(City);
+
+		if (errorOrResult.IsError)
+		{
+			Response = errorOrResult.FirstError.Code;
+			return;
+		}
+
+		_forecast = errorOrResult.Value;
+
+	}
+
+	public string GetWindDirection(double windDeg)
+	{
+		string[] directions = { "N", "NE", "E", "SE", "S", "SW", "W", "NW", "N" };
+		int index = (int)Math.Round(windDeg / 45.0) % 8;
+		return directions[index];
+	}
+
+	public string ConvertToUniversalTime(int time)
+	{
+		return DateTimeOffset.FromUnixTimeSeconds(time)
+				.ToLocalTime().ToString("HH:mm");
+	}
+
+	private string FormatDateTime(string itemDateTime)
+	{
+		if (DateTime.TryParse(itemDateTime, out DateTime parsedDateTime))
+		{
+			var now = DateTime.Now;
+
+			if (parsedDateTime.Date == now.Date)
+			{
+				return $"Today {parsedDateTime:hh:mm tt}";
+			}
+			else if (parsedDateTime.Date == now.AddDays(1).Date)
+			{
+				return $"Tomorrow {parsedDateTime:hh:mm tt}";
+			}
+			else
+			{
+				return parsedDateTime.ToString("dddd hh:mm tt");  
+			}
+		}
+		else
+		{
+			return "Invalid Date";  
+		}
+	}
 
 
 }
