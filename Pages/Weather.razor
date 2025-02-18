@@ -2,11 +2,12 @@
 @using WeatherApp.Models
 @using WeatherApp.Services
 @inject WeatherService WeatherService
+@inject ImageService ImageService
 @inject IJSRuntime JS
 
 @* Weather-part *@
 
-<section class="main-part">
+<section class="main-part" style="@backgroundStyle">
 	<section class="search-section">
 		<h1>
 			Daily Weather Forecast
@@ -20,10 +21,10 @@
 		</p>
 		<div class="search-container">
 			<input id="searchInput"
-				   class="search-input"
-				   type="text" @bind="City"
-				   placeholder="Search for location..."
-				   autofocus="autofocus" />
+			class="search-input"
+			type="text" @bind="City"
+			placeholder="Search for location..."
+			autofocus="autofocus" />
 			<button class="search-button" @onclick="GetWeather">
 				🔍
 			</button>
@@ -44,13 +45,13 @@
 			<div class="top-weather">
 				<h4>@WeatherResponse.Name</h4>
 				<img src="@($"https://openweathermap.org/img/wn/{WeatherResponse.Weather[0].Icon}@2x.png")"
-					 alt="@WeatherResponse.Weather[0].Description">
+				alt="@WeatherResponse.Weather[0].Description">
 			</div>
 			<div class="midle-weather">
 				<h5 class="date">
 					Today,
 					@DateTime.Now.ToString("dd MMMM",
-										new System.Globalization.CultureInfo("en-GB"))
+																																																																new System.Globalization.CultureInfo("en-GB"))
 				</h5>
 				<h2 class="temperature">@Math.Round(WeatherResponse.AboutWeather.Temp)°</h2>
 				<p class="description">@WeatherResponse.Weather[0].Description.ToUpper()</p>
@@ -94,8 +95,8 @@
 				{
 					<div class="forecast-card">
 						<img src="@($"https://openweathermap.org/img/wn/{item.CurrentWeather[0].Icon}@2x.png")"
-							 alt="@item.CurrentWeather[0].Name"
-							 height="75">
+						alt="@item.CurrentWeather[0].Name"
+						height="75">
 						<p class="hourly-temp">@Math.Round(item.Main.Temperature)°</p>
 						<p>@item.CurrentWeather[0].Name</p>
 						<hr />
@@ -153,13 +154,13 @@
 						<div class="top-weather">
 							<h4>@WeatherResponse.Name</h4>
 							<img src="@($"https://openweathermap.org/img/wn/{WeatherResponse.Weather[0].Icon}@2x.png")"
-								 alt="@WeatherResponse.Weather[0].Description">
+							alt="@WeatherResponse.Weather[0].Description">
 						</div>
 						<div class="midle-weather">
 							<h5 class="date">
 								Today,
 								@DateTime.Now.ToString("dd MMMM",
-								new System.Globalization.CultureInfo("en-GB"))
+																																																																																									new System.Globalization.CultureInfo("en-GB"))
 							</h5>
 							<h2 class="temperature">@Math.Round(WeatherResponse.AboutWeather.Temp)°</h2>
 							<p class="description">@WeatherResponse.Weather[0].Description.ToUpper()</p>
@@ -199,7 +200,7 @@
 							<svg width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
 								<circle cx="50" cy="50" r="40" stroke="black" stroke-width="4" fill="none" />
 								<polygon points="50,15 40,35 50,30 60,35" fill="black"
-										 transform="rotate(@WeatherResponse!.Wind.Deg 50 50)" />
+								transform="rotate(@WeatherResponse!.Wind.Deg 50 50)" />
 								<circle cx="50" cy="50" r="5" fill="black" />
 							</svg>
 							<div>
@@ -220,7 +221,7 @@
 							</div>
 							<svg width="100" height="100" viewBox="0 0 120 100" fill="none" xmlns="http://www.w3.org/2000/svg">
 								<path d="M10 50C20 30 40 15 60 15C80 15 100 30 110 50C100 70 80 85 60 85C40 85 20 70 10 50Z"
-									  stroke="black" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round" />
+								stroke="black" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round" />
 								<circle cx="60" cy="50" r="15" fill="black" stroke="black" stroke-width="6" />
 								<circle cx="67" cy="43" r="5" fill="white" />
 							</svg>
@@ -275,6 +276,7 @@
 			</div>
 		}
 	</div>
+
 </section>
 
 
@@ -291,6 +293,10 @@
 
 	private ElementReference forecastDiv;
 
+	private string ImageBackground { get; set; } = string.Empty;
+
+	private string? backgroundStyle = "background-color: #f0f0f0;";
+
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -299,6 +305,27 @@
 		await GetWeather(); 
 
 		City = string.Empty;
+
+		await GetImage();
+	}
+
+	private async Task GetImage()
+	{
+		var orientation = "landscape";
+
+		var res = await ImageService.GetImageAsync(orientation);
+
+		if (res.IsError)
+		{
+			Response = res.FirstError.Code;
+			return;
+		}
+
+		// Додаємо `url('...')` навколо значення
+		backgroundStyle = $"background-image: url('{res.Value.ImagesList[0].Urls.Full}');";
+
+		// Примусово оновлюємо компонент
+		StateHasChanged();
 	}
 
 	private void ScrollLeft()
